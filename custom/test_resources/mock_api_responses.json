@@ -1,0 +1,271 @@
+{
+    "http://127.0.0.1:8080/api/registries/registry-1": {
+        "id": "registry-1",
+        "data": [
+            {
+                "item": "First item",
+                "id": 25,
+                "system": "Red"
+            },
+            {
+                "item": "Second item",
+                "id": 26,
+                "system": "Blue"
+            }
+        ],
+        "parent": null,
+        "disabled": false,
+        "deleted": false,
+        "updated_at": "2024-03-08T14:41:43",
+        "updated_by": "tester1",
+        "created_at": "2024-03-05T15:33:15",
+        "created_by": "tester2",
+        "checkout_at": "2024-04-25T11:52:16",
+        "checkout_by": "tester1"
+    },
+    "http://127.0.0.1:8080/api/registries/": [
+        {
+            "id": "registry-1",
+            "data": [
+                {
+                    "item": "First item",
+                    "id": 25,
+                    "system": "Red"
+                },
+                {
+                    "item": "Second item",
+                    "id": 26,
+                    "system": "Blue"
+                }
+            ],
+            "parent": null,
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester1",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester1"
+        },
+        {
+            "id": "registry-2",
+            "data": [
+                {
+                    "item": "Third item",
+                    "id": 27,
+                    "system": "Green"
+                },
+                {
+                    "item": "Fourth item",
+                    "id": 28,
+                    "system": "Yellow"
+                }
+            ],
+            "parent": "registry-1",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester1",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester1"
+        },
+        {
+            "id": "registry-3",
+            "data": [
+                {
+                    "item": "Fifth item",
+                    "id": 29,
+                    "system": "Purple"
+                },
+                {
+                    "item": "Sixth item",
+                    "id": 30,
+                    "system": "Orange"
+                }
+            ],
+            "parent": "registry-1",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester1",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester1"
+        },
+        {
+            "id": "registry-4",
+            "data": [
+                {
+                    "item": "Seventh item",
+                    "id": 31,
+                    "system": "Black"
+                },
+                {
+                    "item": "Eighth item",
+                    "id": 32,
+                    "system": "White"
+                }
+            ],
+            "parent": "registry-2",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-5",
+            "data": [
+                {
+                    "item": "Ninth item",
+                    "id": 33,
+                    "system": "Brown"
+                },
+                {
+                    "item": "Tenth item",
+                    "id": 34,
+                    "system": "Pink"
+                }
+            ],
+            "parent": "registry-2",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-6",
+            "data": [
+                {
+                    "item": "Eleventh item",
+                    "id": 35,
+                    "system": "Grey"
+                },
+                {
+                    "item": "Twelfth item",
+                    "id": 36,
+                    "system": "Cyan"
+                }
+            ],
+            "parent": "registry-3",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-7",
+            "data": [
+                {
+                    "item": "Thirteenth item",
+                    "id": 37,
+                    "system": "Magenta"
+                },
+                {
+                    "item": "Fourteenth item",
+                    "id": 38,
+                    "system": "Lime"
+                }
+            ],
+            "parent": "registry-3",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-8",
+            "data": [
+                {
+                    "item": "Fifteenth item",
+                    "id": 39,
+                    "system": "Teal"
+                },
+                {
+                    "item": "Sixteenth item",
+                    "id": 40,
+                    "system": "Azure"
+                }
+            ],
+            "parent": "registry-7",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-9",
+            "data": [
+                {
+                    "item": "Seventeenth item",
+                    "id": 41,
+                    "system": "Slate"
+                },
+                {
+                    "item": "Eighteenth item",
+                    "id": 42,
+                    "system": "Cobalt"
+                }
+            ],
+            "parent": "registry-8",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        },
+        {
+            "id": "registry-10",
+            "data": [
+                {
+                    "item": "Nineteenth item",
+                    "id": 43,
+                    "system": "Indigo"
+                },
+                {
+                    "item": "Twentieth item",
+                    "id": 44,
+                    "system": "Amber"
+                }
+            ],
+            "parent": "registry-5",
+            "disabled": false,
+            "deleted": false,
+            "updated_at": "2024-03-08T14:41:43",
+            "updated_by": "tester3",
+            "created_at": "2024-03-05T15:33:15",
+            "created_by": "tester2",
+            "checkout_at": "2024-04-25T11:52:16",
+            "checkout_by": "tester3"
+        }
+    ],
+    "http://127.0.0.1:8080/api/registries/registry-10/test": {
+        "data": "Success"
+    }
+}

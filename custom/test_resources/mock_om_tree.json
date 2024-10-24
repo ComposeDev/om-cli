@@ -1,0 +1,122 @@
+{ "name": "OM CLI TEST", "description": "This is the OM CLI TEST operation menu.", "custom_variables": {
+    "TEST_REGISTRY_FILE_DIRECTORY": "$WORKSPACE/custom/test_resources/registries/",
+    "TEST_REGISTRY_RESULTS_DIRECTORY": "$WORKSPACE/custom/test_resources/results/"
+ }, "operations": [
+    { "operation_id": "get_registry", "menu_title": "Get Registry", "help_text": "Return a JSON object containing the details of a specific registry.", "actions": [
+        { "type": "API_REQUEST", "name": "test_api.get_registry", "parameters": [
+            { "name": "registry_id", "command_parameter": "True" }
+        ] }
+    ] },
+    { "operation_id": "get_all_registries", "menu_title": "Get Registries", "help_text": "Return a JSON object containing all registries.", "actions": [
+        { "type": "API_REQUEST", "name": "test_api.get_all_registries" }
+    ] },
+    { "operation_id": "choose_registry_to_store_loops", "menu_title": "Choose and store a registry to a file with looping", "help_text": "Present a tree of all registries and choose one to store. Extracts the registry from the get_all_registries result.", "actions": [
+        { "type": "LOOP_START", "name": "get_and_present_all_registries", "loop_number": "1" },
+        { "type": "API_REQUEST", "name": "test_api.get_all_registries" },
+        { "type": "LOOP_START", "name": "present_all_registries", "loop_number": "2" },
+        { "type": "FUNCTION_CALL", "name": "present_simple_json_tree", "parameters": [
+            { "name": "json_string", "custom_input_name": "registries_json" },
+            { "name": "node_name_field", "preset_value": "id" },
+            { "name": "parent_field", "preset_value": "parent" }
+        ] },
+        { "type": "LOOP_END", "name": "present_all_registries", "loop_number": "2" },
+        { "type": "LOOP_END", "name": "get_and_present_all_registries", "loop_number": "1" },
+        { "type": "LOOP_START", "name": "choose_and_store_registry", "loop_number": "3" },
+        { "type": "FUNCTION_CALL", "name": "extract_object_from_json_list", "parameters": [
+            { "name": "identifier", "non_stick": "True", "command_parameter": "True" },
+            { "name": "json_string", "custom_input_name": "registries_json" },
+            { "name": "id_field", "preset_value": "id" },
+            { "name": "object_field", "preset_value": "data" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "store_json_string_to_json_file", "parameters": [
+            { "name": "directory_path", "preset_value": "{{{TEST_REGISTRY_FILE_DIRECTORY}}}" },
+            { "name": "json_string", "custom_input_name": "extracted_json_object" }
+        ] },
+        { "type": "LOOP_END", "name": "choose_and_store_registry", "loop_number": "3" }
+    ] },
+    { "operation_id": "send_data_to_kafka", "menu_title": "Send data to Kafka", "help_text": "Fetch the base registry and send it to Kafka", "actions": [
+        { "type": "API_REQUEST", "name": "test_api.get_registry", "parameters": [
+            { "name": "registry_id", "command_parameter": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "massage_data_to_kafka", "parameters": [
+            { "name": "topic", "preset_value": "company.test.registry-data"},
+            { "name": "key", "preset_value": "stuff" },
+            { "name": "data", "custom_input_name": "registry_json" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "send_message_to_kafka", "parameters": [
+            { "name": "kafka_server_path", "preset_value": "TEST" }
+        ] }
+    ] },
+    { "operation_id": "test_a_registry_from_file", "menu_title": "Test a Registry from File", "help_text": "Test a registry from a file.", "actions": [
+        { "type": "FUNCTION_CALL", "name": "get_local_files_list", "parameters": [
+            { "name": "directory_path", "default_value": "{{{TEST_REGISTRY_FILE_DIRECTORY}}}", "custom_text": "Enter the path to the registry directory", "command_parameter": "True" }
+        ]},
+        { "type": "FUNCTION_CALL", "name": "list_array_with_indexes", "parameters": [
+            { "name": "item_list_files", "override_parameter_name": "item_list", "custom_input_name": "files_list", "custom_text": "Files in the directory" },
+            { "name": "list_node_fields_files", "override_parameter_name": "list_node_fields", "preset_value": "file_name" },
+            { "name": "show_loop_alternative_files", "override_parameter_name": "show_loop_alternative", "type": "BOOLEAN", "preset_value": "False" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "prompt_user_to_choose_indexed_item", "parameters": [
+            { "name": "item_list_files", "override_parameter_name": "item_list" },
+            { "name": "file_number", "override_parameter_name": "item_number", "type": "INTEGER", "custom_text": "Choose a Registry file ID to test", "non_stick": "True", "command_parameter": "True" },
+            { "name": "item_node_value_file", "override_parameter_name": "item_node_value", "preset_value": "file_path" },
+            { "name": "file_path_parsed", "override_parameter_name": "chosen_item_value", "override_output_parameter_name": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "replace_text", "parameters": [
+            { "name": "text", "custom_input_name": "file_path_parsed" },
+            { "name": "search_text", "preset_value": "\"" },
+            { "name": "replace_text", "preset_value": "" },
+            { "name": "file_path", "override_parameter_name": "replaced_text", "override_output_parameter_name": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "prompt_for_parameters", "parameters": [
+            { "name": "extra_parameter", "type": "BOOLEAN", "default_value": "true", "custom_text": "Test using a custom parameter", "non_stick": "True", "custom_parameter": "True", "command_parameter": "True" },
+            { "name": "user", "type": "AUTO", "non_stick": "True", "custom_parameter": "True", "command_parameter": "True" }
+        ] },
+        { "type": "LOOP_START", "name": "prompt_for_parameters_loop", "loop_number": "1" },
+        { "type": "API_REQUEST", "name": "test_api.get_filtered_registries", "parameters": [
+            { "name": "filter", "custom_text": "Enter a filter to search for Registries", "non_stick": "True", "command_parameter": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "list_array_with_indexes", "parameters": [
+            { "name": "item_list", "custom_input_name": "registries_json", "custom_text": "Choose a Registry ID to test the registry file on" },
+            { "name": "list_node_fields", "preset_value": "id" },
+            { "name": "show_loop_alternative", "type": "BOOLEAN", "preset_value": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "prompt_user_to_choose_indexed_item", "parameters": [
+            { "name": "item_list" },
+            { "name": "r_number", "override_parameter_name": "item_number", "type": "INTEGER", "custom_text": "Which registry do you want to test the registry on? ('0' to continue searching)", "non_stick": "True", "command_parameter": "True" },
+            { "name": "item_node_value", "preset_value": "id" },
+            { "name": "registry_name_parsed", "override_parameter_name": "chosen_item_value", "override_output_parameter_name": "True" }
+        ] },
+        { "type": "LOOP_END", "name": "prompt_for_parameters_loop", "loop_number": "1", "custom_loop_repeat_prompt": "Do you want to continue searching?" },
+        { "type": "FUNCTION_CALL", "name": "replace_text", "parameters": [
+            { "name": "text", "custom_input_name": "registry_name_parsed" },
+            { "name": "search_text", "preset_value": "\"" },
+            { "name": "replace_text", "preset_value": "" },
+            { "name": "registry_name", "override_parameter_name": "replaced_text", "override_output_parameter_name": "True" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "file_path_to_file_string", "parameters": [
+            { "name": "file_path" }
+        ] },
+        { "type": "API_REQUEST", "name": "test_api.testregistry", "failure_termination": "False", "parameters": [
+            { "name": "r_id", "custom_input_name": "registry_name" },
+            { "name": "extra_parameter", "custom_parameter": "True", "type": "BOOLEAN", "command_parameter": "True" },
+            { "name": "testregistry", "custom_input_name": "file_string" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "store_api_response_to_timestamped_file", "parameters": [
+            { "name": "results_directory_path", "override_parameter_name": "directory_path", "preset_value": "{{{TEST_REGISTRY_RESULTS_DIRECTORY}}}" },
+            { "name": "file_name", "custom_input_name": "registry_name" }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "print_parameter", "parameters": [
+            { "name": "parameter_value", "custom_input_name": "result_file_content" }
+        ], "skip_if_conditions": [
+            { "conditions": [
+                { "parameter_name": "result_file_content", "jsonpath": "$", "regex": "^Failed$", "skip_if_path_not_found": "False" }
+            ] }
+        ] },
+        { "type": "FUNCTION_CALL", "name": "print_response", "skip_if_conditions": [
+            { "conditions": [
+                { "parameter_name": "api_result", "jsonpath": "$", "regex": "^Failed$", "skip_if_path_not_found": "True" }
+            ] }
+        ] }
+    ] }
+] }

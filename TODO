@@ -1,0 +1,8 @@
+
+[] Fix consolemenu's no empty lines "bug"
+[] Support for menu choices without using enter?
+[] Add functionality to specify the parameter type and pass it along as string until it should be used and then parse it to its actual type
+[] Remove / merge redundant tests
+[] Add more tests
+[] Add WebUI for managing configuration
+[] Replace generated docstrings with handcrafted ones

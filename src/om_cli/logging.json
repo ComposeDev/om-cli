@@ -1,0 +1,70 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "default": {
+            "fmt": "%(asctime)s %(levelprefix)s%(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "use_colors": true
+        },
+        "syslog": {
+            "fmt": "%(asctime)s %(levelprefix)s%(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S"
+        }
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "formatter": "syslog",
+            "stream": "ext://sys.stdout",
+            "level": "INFO",
+            "filters": [
+                "info_debug_filter"
+            ]
+        },
+        "stderr": {
+            "class": "logging.StreamHandler",
+            "formatter": "syslog",
+            "stream": "ext://sys.stderr",
+            "level": "WARNING",
+            "filters": [
+                "warning_error_filter"
+            ]
+        },
+        "syslog": {
+            "class": "logging.handlers.SysLogHandler",
+            "formatter": "syslog",
+            "address": "/dev/log",
+            "level": "DEBUG"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "formatter": "syslog",
+            "filename": "logs/logfile.log",
+            "mode": "a",
+            "level": "DEBUG"
+        }
+    },
+    "loggers": {
+        "om_cli": {
+            "handlers": [
+                "stdout",
+                "stderr",
+                "syslog",
+                "file"
+            ],
+            "level": "DEBUG",
+            "propagate": false
+        },
+        "root": {
+            "handlers": [
+                "stdout",
+                "stderr",
+                "syslog",
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": false
+        }
+    }
+}

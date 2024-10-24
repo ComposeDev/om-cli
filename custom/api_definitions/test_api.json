@@ -1,0 +1,86 @@
+{
+    "name": "Test API",
+    "id": "test_api",
+    "request_timeout": 10,
+    "custom_variables": {
+        "BASE_URL": "http://127.0.0.1:8080/api"
+    },
+    "description": "REST API for testing",
+    "api_endpoints": [
+        {
+            "name": "get_all_registries",
+            "request_type": "GET",
+            "url": "{{BASE_URL}}/registries/",
+            "headers": {},
+            "data": null,
+            "params": null,
+            "response_variables": {
+                "registries_json": "."
+            }
+        },
+        {
+            "name": "get_filtered_registries",
+            "request_type": "GET",
+            "url": "{{BASE_URL}}/registries/",
+            "headers": {},
+            "data": null,
+            "params": "filter={filter}",
+            "response_variables": {
+                "registries_json": "."
+            }
+        },
+        {
+            "name": "testregistry",
+            "request_type": "POST",
+            "url": "{{BASE_URL}}/registries/{r_id}/test",
+            "headers": {},
+            "data": "{testregistry}",
+            "params": "extra_parameter={extra_parameter}",
+            "response_variables": {
+                "result_file_content": "data"
+            }
+        },
+        {
+            "name": "get_registry",
+            "request_type": "GET",
+            "url": "{{BASE_URL}}/registries/{registry_id}",
+            "headers": {},
+            "data": null,
+            "params": null,
+            "response_variables": {
+                "identifier": "id",
+                "registry_json": "data"
+            }
+        },
+        {
+            "name": "create_registry",
+            "request_type": "POST",
+            "url": "{{BASE_URL}}/registries/",
+            "headers": { "user": "{user}" },
+            "data": "{registry}",
+            "params": null,
+            "response_variables": null
+        },
+        {
+            "name": "update_registry",
+            "request_type": "PUT",
+            "url": "{{BASE_URL}}/registries/{registry_id}",
+            "headers": { "user": "{user}" },
+            "data": "{registry}",
+            "params": null,
+            "response_variables": {
+                "identifier": "id",
+                "registry_json": "data"
+            }
+        },
+        {
+            "name": "delete_registry",
+            "request_type": "DELETE",
+            "url": "{{BASE_URL}}/registries/{registry_id}",
+            "headers": {},
+            "data": null,
+            "params": null,
+            "response_variables": null
+        }
+    ]
+}

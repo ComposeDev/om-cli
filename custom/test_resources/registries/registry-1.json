@@ -1,0 +1,12 @@
+[
+    {
+        "item": "First item",
+        "id": 25,
+        "system": "Red"
+    },
+    {
+        "item": "Second item",
+        "id": 26,
+        "system": "Blue"
+    }
+]

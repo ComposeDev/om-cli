@@ -1,0 +1,28 @@
+[project]
+name = "om-cli"
+version = "0.7.0"
+description = "Operation Menu Command Line Interface"
+
+[tool.pytest.ini_options]
+minversion = 6.0
+asyncio_mode = "auto"
+filterwarnings = [
+    'ignore::DeprecationWarning'
+]
+
+[tool.pytest_env]
+
+[[tool.mypy.overrides]]
+module = [
+    "consolemenu",
+    "consolemenu.items",
+    "consolemenu.format",
+    "consolemenu.menu_component",
+    "requests",
+    "requests.models",
+    "jsonpath_ng",
+    "colors",
+    "syslog_rfc5424_formatter",
+    "confluent_kafka"
+]
+ignore_missing_imports = true
