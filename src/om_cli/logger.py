@@ -11,7 +11,8 @@ import os
 
 from syslog_rfc5424_formatter import RFC5424Formatter
 
-log_config = "src/om_cli/logging.json"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+log_config = os.path.join(current_dir, "logging.json")
 logger = None
 
 

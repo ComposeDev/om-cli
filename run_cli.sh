@@ -1,4 +1,7 @@
 #!/bin/sh
 # Run the CLI
 
-./.venv/bin/python -m src.om_cli
+# Get the directory of the current script
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+export PYTHONPATH="$PYTHONPATH:$SCRIPT_DIR"
+python -m src.om_cli
