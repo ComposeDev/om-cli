@@ -5,6 +5,8 @@ This module contains functions for processing a chain of actions.
 """
 
 import copy
+import sys
+from pathlib import Path
 
 from consolemenu import Screen
 
@@ -19,15 +21,19 @@ from src.om_cli.models.om_parameter import OMParameter, OMParameterType
 from src.om_cli.models.om_parameter_list import OMParameterList
 from src.om_cli.models.result_object import ResultObject
 from src.om_cli.services.custom_components_processing import CustomComponents
-from src.om_cli.services.parameter_processing import (
-    generate_command,
-    process_parameters,
-)
+from src.om_cli.services.parameter_processing import process_parameters
 
 ERROR_COLOR = "red"
 INFO_COLOR = "yellow"
 PROMPT_COLOR = "orange"
 TITLE_COLOR = "blue"
+
+# Get the project base path from the current file path
+SCRIPT_PATH = Path(__file__).resolve().parents[3]
+
+# Generate the command prefix to run the CLI script
+# Command: cd <project_base_path> && <python_executable> <script_name> -s <custom_arguments> -o <operation> <parameters>
+COMMAND_PREFIX = f"cd {SCRIPT_PATH} && {sys.executable} -m src.om_cli -s"
 
 
 def prompt_user(message: str, color: str):
@@ -265,7 +271,7 @@ def process_operation(
     logger.debug("Finished processing the operation: %s", operation_name)
     command = None
     if not failed_processing:
-        command = generate_command(operation_id, state.parameter_history)
+        command = generate_command(operation_id, state.parameter_history, custom_components)
         print("\nCommand:\n" + colorize_text(f"{command}\n", INFO_COLOR))
         prompt_user("\nPress enter to continue", PROMPT_COLOR)
 
@@ -459,6 +465,58 @@ def process_looping(
             return "break"
         return "continue"
     return ""
+
+
+def generate_command(operation_id, prepared_parameters, custom_components):
+    """
+    Generates a command string based on the given operation ID and prepared parameters.
+    Used be able to skip the CLI navigation and instead perform an operation directly without having to interact with the CLI.
+
+    Args:
+        operation_id (str): The ID of the operation.
+        prepared_parameters (list): A list of prepared parameters.
+        custom_components (CustomComponents): The custom components object, in order to get used arguments.
+
+    Returns:
+        str: The generated command string.
+    """
+
+    command = f"{COMMAND_PREFIX}"
+
+    argument_custom_path = custom_components.get_argument_custom_path()
+    if argument_custom_path:
+        command += f' -c "{argument_custom_path}"'
+
+    argument_om_tree_file_path = custom_components.get_argument_om_tree_file_path()
+    if argument_om_tree_file_path:
+        command += f' -t "{argument_om_tree_file_path}"'
+
+    argument_mock_api_responses_file_path = (
+        custom_components.get_argument_mock_api_responses_file_path()
+    )
+    if argument_mock_api_responses_file_path:
+        command += f' -m "{argument_mock_api_responses_file_path}"'
+
+    command += f' -o "{operation_id}"'
+
+    if prepared_parameters:
+        for om_parameter in prepared_parameters:
+            if om_parameter.type == OMParameterType.AUTO:
+                continue
+
+            if not om_parameter.command_parameter:
+                continue
+
+            command += f" {om_parameter.name}="
+
+            value = om_parameter.value
+
+            if om_parameter.type == OMParameterType.STRING:
+                value = f'"{value}"'
+
+            command += f"{value}"
+
+    return command
 
 
 def debug_log_action_parameters(action: OMAction, extra_parameters: OMParameterList):

@@ -24,19 +24,22 @@ from src.om_cli.models.om_tree import OMTree
 
 ERROR_COLOR = "red"
 SCRIPT_PATH = Path(__file__).resolve().parents[3]
-CUSTOM_PATHS = {"WORKSPACE": SCRIPT_PATH.as_posix()}
+CUSTOM_VARIABLE_PATHS = {"WORKSPACE": SCRIPT_PATH.as_posix()}
+DEFAULT_CUSTOM_PATH = f"{SCRIPT_PATH}/custom"
+DEFAULT_OM_TREE_PATH = f"{SCRIPT_PATH}/custom/operation_menus/om_tree.json"
+DEFAULT_MOCK_API_RESPONSES_FILE_PATH = ""
 
 
 class CustomComponents:
     def __init__(
         self,
-        action_packs_path: str,
-        api_definitions_path: str,
+        custom_path: str,
         om_tree_path: str,
         mock_api_responses_file_path: str,
     ):
-        self.action_packs_path = action_packs_path
-        self.api_definitions_path = api_definitions_path
+        self.custom_path = custom_path
+        self.action_packs_path = os.path.join(custom_path, "action_packs")
+        self.api_definitions_path = os.path.join(custom_path, "api_definitions")
         self.om_tree_path = om_tree_path
         self.mock_api_responses_file_path = mock_api_responses_file_path
         self.action_packs: dict = {}
@@ -46,18 +49,22 @@ class CustomComponents:
 
     @staticmethod
     def load_custom_components(
-        custom_path: str, om_tree_path: str, mock_api_responses_file_path: str = ""
+        argument_custom_path: str,
+        argument_om_tree_path: str,
+        argument_mock_api_responses_file_path: str = "",
     ) -> "CustomComponents":
         """
         Load custom components from the custom directory.
 
         """
         try:
-            action_pack_dir = os.path.join(custom_path, "action_packs")
-            api_definitions_dir = os.path.join(custom_path, "api_definitions")
+            custom_path = argument_custom_path or DEFAULT_CUSTOM_PATH
+            om_tree_path = argument_om_tree_path or DEFAULT_OM_TREE_PATH
+            mock_api_responses_file_path = (
+                argument_mock_api_responses_file_path or DEFAULT_MOCK_API_RESPONSES_FILE_PATH
+            )
             custom_components = CustomComponents(
-                action_pack_dir,
-                api_definitions_dir,
+                custom_path,
                 om_tree_path,
                 mock_api_responses_file_path,
             )
@@ -144,6 +151,19 @@ class CustomComponents:
         if not self.mock_api_responses:
             self.load_mock_api_responses()
         return self.mock_api_responses
+
+    def get_argument_custom_path(self) -> str:
+        return self.custom_path if self.custom_path != DEFAULT_CUSTOM_PATH else ""
+
+    def get_argument_om_tree_file_path(self) -> str:
+        return self.om_tree_path if self.om_tree_path != DEFAULT_OM_TREE_PATH else ""
+
+    def get_argument_mock_api_responses_file_path(self) -> str:
+        return (
+            self.mock_api_responses_file_path
+            if self.mock_api_responses_file_path != DEFAULT_MOCK_API_RESPONSES_FILE_PATH
+            else ""
+        )
 
     def get_om_tree(self) -> OMTree:
         if not self.om_tree:
@@ -692,7 +712,7 @@ class CustomComponents:
                     if "$" in var_value:
                         var_value = re.sub(
                             r"\$(\w+)",
-                            lambda m: CUSTOM_PATHS.get(m.group(1), m.group(0)),
+                            lambda m: CUSTOM_VARIABLE_PATHS.get(m.group(1), m.group(0)),
                             var_value,
                         )
 

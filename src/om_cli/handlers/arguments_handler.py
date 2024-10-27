@@ -175,11 +175,11 @@ def parse_arguments(arguments=None):
 
     generate_tree = bool(argument_parser_result.generate_tree)
 
-    om_tree_file_path = f"{SCRIPT_PATH}/custom/operation_menus/om_tree.json"
+    om_tree_file_path = ""
     if argument_parser_result.tree_path:
         om_tree_file_path = argument_parser_result.tree_path
 
-    custom_path = f"{SCRIPT_PATH}/custom"
+    custom_path = ""
     if argument_parser_result.custom_path:
         custom_path = argument_parser_result.custom_path
 

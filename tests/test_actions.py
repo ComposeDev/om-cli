@@ -24,11 +24,13 @@ from src.om_cli.services.operation_processing import Screen, process_operation
 class TestActions(unittest.TestCase):
     # Get the project base path from the current file path
     SCRIPT_PATH = Path(__file__).parents[1]
-    RUN_MODULE_COMMAND = f"cd {Path(SCRIPT_PATH)} && {sys.executable} -m src.om_cli -s -o"
     CUSTOM_PATH = f"{SCRIPT_PATH}/custom"
     OM_TREE_PATH = f"{SCRIPT_PATH}/custom/test_resources/mock_om_tree.json"
     API_RESPONSES_PATH = f"{SCRIPT_PATH}/custom/test_resources/mock_api_responses.json"
     BASE_URL = "http://127.0.0.1:8080"
+    RUN_MODULE_COMMAND = (
+        f'cd {Path(SCRIPT_PATH)} && {sys.executable} -m src.om_cli -s -t "{OM_TREE_PATH}" -o'
+    )
 
     @staticmethod
     def mock_requests_get(url, headers=None, params=None, timeout=None):

@@ -1,14 +1,11 @@
 # src/om_cli/__main__.py
 """OM CLI"""
 
-from consolemenu import Screen
-
 from src.om_cli.handlers.arguments_handler import (
     convert_arguments_to_operation_and_om_parameters,
     parse_arguments,
 )
 from src.om_cli.handlers.menu_handler import run_menu
-from src.om_cli.helpers.text_helpers import colorize_text
 from src.om_cli.logger import logger
 from src.om_cli.services.custom_components_processing import CustomComponents
 from src.om_cli.services.operation_processing import process_operation
@@ -24,11 +21,6 @@ def main():
 
     logger.debug("Starting OM CLI...")
     parse_arguments_result = parse_arguments()
-
-    if not parse_arguments_result.get("custom_path"):
-        logger.error("Custom path is missing.")
-        Screen().input(colorize_text("\nPress enter to exit", "red"))
-        exit(1)
 
     custom_components = CustomComponents.load_custom_components(
         parse_arguments_result.get("custom_path"),
