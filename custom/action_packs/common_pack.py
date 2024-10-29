@@ -101,8 +101,6 @@ def print_parameter(
 ) -> ResultObject:
     """
     Action for printing a parameter.
-    Can use placeholders in the parameter_value string to reference other OMParameters.
-        Use the format: {{parameter_name}} in the question string and name the OMParameter accordingly.
 
     OMParameters used:
         - parameter_value: The value of the parameter to print (Read)
@@ -150,10 +148,10 @@ def get_user(
     result_object: ResultObject, action_parameters: OMParameterList, action_index: int
 ) -> ResultObject:
     """
-    Action to get the current logged in user
+    Action to get the currently logged in user.
 
     OMParameters used:
-        - user: The current logged in user (Created)
+        - user: The currently logged in user (Created)
 
     Args:
         result_object (ResultObject): The result object from the previous action and the variable to store the result of the current action.
@@ -214,8 +212,6 @@ def prompt_for_yes_no(
     """
     Action for prompting the user with a yes/no question.
     The user can answer with 'y' or 'n' and the result will be stored in the result object.
-    Can use placeholders in the question string to reference other OMParameters.
-        Use the format: {{parameter_name}} in the question string and name the OMParameter accordingly.
 
     OMParameters used:
         - question: The question to ask the user (Read)
