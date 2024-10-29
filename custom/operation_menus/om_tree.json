@@ -118,5 +118,11 @@
                 { "parameter_name": "api_result", "jsonpath": "$", "regex": "^Failed$", "skip_if_path_not_found": "True" }
             ] }
         ] }
+    ] },
+    { "operation_id": "print_current_user", "menu_title": "Print user", "help_text": "Get the current session user and print the user name", "actions": [
+        { "type": "FUNCTION_CALL", "name": "get_user" },
+        { "type": "FUNCTION_CALL", "name": "print_parameter", "parameters": [
+            { "name": "parameter_value", "custom_input_name": "user" }
+        ] }
     ] }
 ] }

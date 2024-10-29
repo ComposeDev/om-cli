@@ -1,5 +1,7 @@
 # custom/action_packs/common_pack.py
 import json
+import os
+import pwd
 
 from consolemenu import Screen
 from rich import print_json as _print_json
@@ -20,6 +22,7 @@ PROMPT_COLOR = "orange"
 PARAMETER_DEFINITIONS = {
     "print_response": {},
     "print_parameter": {"parameter_value": {"direction": "input", "type": "STRING"}},
+    "get_user": {"user": {"direction": "output", "type": "STRING"}},
     "prompt_for_parameters": {},
     "prompt_for_yes_no": {
         "question": {"direction": "input", "type": "STRING"},
@@ -44,12 +47,6 @@ PARAMETER_DEFINITIONS = {
         "item_node_value": {"direction": "input", "type": "STRING"},
         "chosen_item_value": {"direction": "output", "type": "STRING"},
         "show_loop_alternative": {"direction": "input", "type": "BOOLEAN"},
-    },
-    "print_simple_json_list": {
-        "json_list": {"direction": "input", "type": "STRING"},
-        "list_node_fields": {"direction": "input", "type": "STRING"},
-        "list_limit": {"direction": "input", "type": "INTEGER"},
-        "list_text": {"direction": "input", "type": "STRING"},
     },
 }
 
@@ -130,13 +127,11 @@ def print_parameter(
 
         try:
             # Check if the parameter value is JSON otherwise print the text without JSON color highlighting
-            parameter_json_value = _parse_json(
-                parameter_value, "The parameter does not seem to be of the JSON type"
-            )
+            parameter_json_value = json.loads(parameter_value)
             logger.debug("The parameter seems to be of the JSON type")
             _print_json(data=parameter_json_value)
         except json.JSONDecodeError as ex:
-            logger.debug(ex)
+            logger.debug(f"The parameter does not seems to be of the JSON type: {ex}")
             print(colorize_text(f"\n{parameter_value}\n", INFO_COLOR))
 
         result_object = ResultObject(True, "", None, OMParameterList())
@@ -149,6 +144,38 @@ def print_parameter(
         )
 
     return result_object
+
+
+def get_user(
+    result_object: ResultObject, action_parameters: OMParameterList, action_index: int
+) -> ResultObject:
+    """
+    Action to get the current logged in user
+
+    OMParameters used:
+        - user: The current logged in user (Created)
+
+    Args:
+        result_object (ResultObject): The result object from the previous action and the variable to store the result of the current action.
+        action_parameters (OMParameterList): Accumulated parameters from previous actions.
+        action_index (int): The index of the current action in the operation.
+
+    Returns:
+        ResultObject: The updated result object.
+    """
+
+    value = pwd.getpwuid(os.getuid())[0]
+
+    om_parameters = OMParameterList()
+    om_parameters.add_parameter(
+        OMParameter(
+            name=action_parameters.override_internal_action_parameter_name("user", action_index),
+            value=value,
+            action_index=action_index,
+        )
+    )
+
+    return ResultObject(True, "User retrieved", None, om_parameters)
 
 
 def prompt_for_parameters(
@@ -513,101 +540,6 @@ def list_array_with_indexes(
         result_object = ResultObject(
             False,
             f"An unexpected error occurred while printing the items from the list: {ex}",
-            None,
-            OMParameterList(),
-        )
-
-    return result_object
-
-
-def print_simple_json_list(
-    result_object: ResultObject, action_parameters: OMParameterList, action_index: int
-) -> ResultObject:
-    """
-    Action for printing a simple JSON list.
-
-    OMParameters used:
-        - json_list: The JSON list to print (Read)
-        - list_node_fields: The fields to display in the list, defaults to the whole item (Read)
-        - list_limit: The maximum number of items to print, defaults to: 10 (Read)
-        - list_text: The text to display before the list (Read)
-
-    Args:
-        result_object (ResultObject): The result object from the previous action and the variable to store the result of the current action.
-        action_parameters (OMParameterList): Accumulated parameters from previous actions.
-        action_index (int): The index of the current action in the operation.
-
-    Returns:
-        ResultObject: The updated result object.
-
-    Raises:
-        ValueError: If no JSON list is found.
-        Exception: If an unexpected error occurs while printing the JSON list.
-    """
-    try:
-        json_list = _fetch_parameter("json_list", action_parameters, action_index)
-        if not json_list:
-            raise ValueError("Found no JSON list to print")
-
-        json_item_list = _parse_json(json_list, "Error decoding the JSON list")
-
-        list_node_fields_value = _fetch_parameter(
-            "list_node_fields", action_parameters, action_index
-        )
-        list_node_fields = list_node_fields_value.split(",") if list_node_fields_value else None
-
-        list_limit_str = _fetch_parameter("item_limit", action_parameters, action_index) or "10"
-        list_limit = -1
-        try:
-            list_limit = int(list_limit_str)
-        except ValueError as exc:
-            raise ValueError(
-                f"The list_limit parameter is not a valid number ({list_limit})"
-            ) from exc
-
-        list_text = (
-            _fetch_parameter("list_text", action_parameters, action_index) or "Items in the list"
-        )
-
-        if json_item_list:
-            caption = ""
-            if len(json_item_list) > list_limit:
-                caption = (
-                    f"Note: Only showing the first {list_limit} of {len(json_item_list)} items"
-                )
-
-            table = Table(title=list_text, caption=caption)
-            if list_node_fields:
-                for field in list_node_fields:
-                    table.add_column(
-                        field.replace("_", " ").capitalize(),
-                        justify="left",
-                        style="green",
-                    )
-            else:
-                table.add_column("Item", justify="left", style="green")
-
-            for item_id, item in enumerate(json_item_list, start=1):
-                if item_id > list_limit:
-                    break
-
-                table.add_row(
-                    *(
-                        [str(item.get(field, "")) for field in list_node_fields]
-                        if list_node_fields
-                        else [str(item)]
-                    )
-                )
-
-            Console().print(table)
-        else:
-            print(colorize_text("The JSON list is empty / No results\n", INFO_COLOR))
-
-        result_object = ResultObject(True, "JSON list printed", None, OMParameterList())
-    except Exception as ex:
-        result_object = ResultObject(
-            False,
-            f"An unexpected error occurred while printing the JSON list: {ex}",
             None,
             OMParameterList(),
         )

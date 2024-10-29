@@ -4,8 +4,11 @@ import os
 import re
 
 from rich import print as _rich_print
+from rich.console import Console
+from rich.table import Table
 from rich.tree import Tree
 
+from src.om_cli.helpers.text_helpers import colorize_text
 from src.om_cli.logger import get_logger as _get_logger
 from src.om_cli.models.om_parameter import OMParameter, OMParameterType
 from src.om_cli.models.om_parameter_list import OMParameterList
@@ -14,6 +17,7 @@ from src.om_cli.models.result_object import ResultObject
 logger = _get_logger()
 
 TREE_COLOR = "green"
+INFO_COLOR = "yellow"
 
 PARAMETER_DEFINITIONS = {
     "store_result_to_json_file": {
@@ -44,6 +48,12 @@ PARAMETER_DEFINITIONS = {
         "object_field": {"direction": "input", "type": "STRING"},
         "json_string": {"direction": "input", "type": "STRING"},
         "extracted_json_object": {"direction": "output", "type": "STRING"},
+    },
+    "print_simple_json_list": {
+        "json_list": {"direction": "input", "type": "STRING"},
+        "list_node_fields": {"direction": "input", "type": "STRING"},
+        "list_limit": {"direction": "input", "type": "INTEGER"},
+        "list_text": {"direction": "input", "type": "STRING"},
     },
     "present_simple_json_tree": {
         "json_string": {"direction": "input", "type": "STRING"},
@@ -463,6 +473,101 @@ def extract_object_from_json_list(
     return result_object
 
 
+def print_simple_json_list(
+    result_object: ResultObject, action_parameters: OMParameterList, action_index: int
+) -> ResultObject:
+    """
+    Action for printing a simple JSON list.
+
+    OMParameters used:
+        - json_list: The JSON list to print (Read)
+        - list_node_fields: The fields to display in the list, defaults to the whole item (Read)
+        - list_limit: The maximum number of items to print, defaults to: 10 (Read)
+        - list_text: The text to display before the list (Read)
+
+    Args:
+        result_object (ResultObject): The result object from the previous action and the variable to store the result of the current action.
+        action_parameters (OMParameterList): Accumulated parameters from previous actions.
+        action_index (int): The index of the current action in the operation.
+
+    Returns:
+        ResultObject: The updated result object.
+
+    Raises:
+        ValueError: If no JSON list is found.
+        Exception: If an unexpected error occurs while printing the JSON list.
+    """
+    try:
+        json_list = _fetch_parameter("json_list", action_parameters, action_index)
+        if not json_list:
+            raise ValueError("Found no JSON list to print")
+
+        json_item_list = _parse_json(json_list, "Error decoding the JSON list")
+
+        list_node_fields_value = _fetch_parameter(
+            "list_node_fields", action_parameters, action_index
+        )
+        list_node_fields = list_node_fields_value.split(",") if list_node_fields_value else None
+
+        list_limit_str = _fetch_parameter("item_limit", action_parameters, action_index) or "10"
+        list_limit = -1
+        try:
+            list_limit = int(list_limit_str)
+        except ValueError as exc:
+            raise ValueError(
+                f"The list_limit parameter is not a valid number ({list_limit})"
+            ) from exc
+
+        list_text = (
+            _fetch_parameter("list_text", action_parameters, action_index) or "Items in the list"
+        )
+
+        if json_item_list:
+            caption = ""
+            if len(json_item_list) > list_limit:
+                caption = (
+                    f"Note: Only showing the first {list_limit} of {len(json_item_list)} items"
+                )
+
+            table = Table(title=list_text, caption=caption)
+            if list_node_fields:
+                for field in list_node_fields:
+                    table.add_column(
+                        field.replace("_", " ").capitalize(),
+                        justify="left",
+                        style="green",
+                    )
+            else:
+                table.add_column("Item", justify="left", style="green")
+
+            for item_id, item in enumerate(json_item_list, start=1):
+                if item_id > list_limit:
+                    break
+
+                table.add_row(
+                    *(
+                        [str(item.get(field, "")) for field in list_node_fields]
+                        if list_node_fields
+                        else [str(item)]
+                    )
+                )
+
+            Console().print(table)
+        else:
+            print(colorize_text("The JSON list is empty / No results\n", INFO_COLOR))
+
+        result_object = ResultObject(True, "JSON list printed", None, OMParameterList())
+    except Exception as ex:
+        result_object = ResultObject(
+            False,
+            f"An unexpected error occurred while printing the JSON list: {ex}",
+            None,
+            OMParameterList(),
+        )
+
+    return result_object
+
+
 def present_simple_json_tree(
     result_object: ResultObject, action_parameters: OMParameterList, action_index: int
 ) -> ResultObject:
@@ -524,6 +629,18 @@ def present_simple_json_tree(
 """
 Helper functions
 """
+
+
+def _parse_json(data: str, error_message: str) -> dict:
+    try:
+        return json.loads(data)
+    except json.JSONDecodeError as e:
+        raise ValueError(error_message) from e
+
+
+def _fetch_parameter(name: str, action_parameters: OMParameterList, action_index: int) -> str:
+    found, parameter = action_parameters.get_om_parameter(name, action_index)
+    return parameter.value if found else None
 
 
 def _generate_tree(json_string: str, node_name_field: str, parent_field: str) -> Tree:
