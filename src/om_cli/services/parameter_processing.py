@@ -1,8 +1,6 @@
 # src/om_cli/services/parameter_processing.py
 
 import copy
-import os
-import pwd
 import sys
 from typing import List
 
@@ -69,17 +67,6 @@ def verify_arguments(arguments, operation: OMOperation):
                         continue
 
                     found = False
-                    if parameter.type == OMParameterType.AUTO:
-                        auto_value = auto_parameter(parameter.name)
-                        om_parameters.add_parameter(
-                            OMParameter(
-                                name=parameter.name,
-                                type=parameter.type,
-                                value=auto_value,
-                                action_index=action_index,
-                            )
-                        )
-                        continue
 
                     if not parameter.command_parameter:
                         logger.debug(
@@ -297,11 +284,6 @@ def process_parameters(
             ):
                 continue
 
-            if om_parameter.type == OMParameterType.AUTO:
-                # Automatically set the value for the parameter so that the user is not able to decide which user to use for example
-                om_parameter.value = auto_parameter(input_name)
-                continue
-
             if om_parameter_copy.preset_value is not None:
                 om_parameter.value = om_parameter_copy.preset_value
                 logger.debug(
@@ -437,28 +419,6 @@ def replace_placeholders(
 
     except Exception as ex:
         raise Exception(f"An error occurred while replacing the placeholders: {ex}") from ex
-
-
-def auto_parameter(parameter_name):
-    """
-    Automatically determines the value for the given parameter.
-    This is so that the user is not able to decide which user to send in the request for example.
-
-    Args:
-        parameter_name (str): The parameter name for which to determine the value.
-
-    Returns:
-        The value of the parameter. If the parameter is not supported, None is returned.
-    """
-    value = None
-
-    if parameter_name == "user":
-        # Get the current user of the system
-        value = pwd.getpwuid(os.getuid())[0]
-    else:
-        logger.warning("The auto parameter %s is currently not supported", parameter_name)
-
-    return value
 
 
 def validate_and_convert_parameter_value(user_input, input_type):

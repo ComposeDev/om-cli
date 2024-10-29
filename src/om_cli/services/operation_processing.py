@@ -501,9 +501,6 @@ def generate_command(operation_id, prepared_parameters, custom_components):
 
     if prepared_parameters:
         for om_parameter in prepared_parameters:
-            if om_parameter.type == OMParameterType.AUTO:
-                continue
-
             if not om_parameter.command_parameter:
                 continue
 

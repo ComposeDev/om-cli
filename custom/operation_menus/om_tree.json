@@ -68,9 +68,10 @@
             { "name": "replace_text", "preset_value": "" },
             { "name": "file_path", "override_parameter_name": "replaced_text", "override_output_parameter_name": "True" }
         ] },
+        { "type": "FUNCTION_CALL", "name": "get_user" },
         { "type": "FUNCTION_CALL", "name": "prompt_for_parameters", "parameters": [
             { "name": "extra_parameter", "type": "BOOLEAN", "default_value": "true", "custom_text": "Test using a custom parameter", "non_stick": "True", "custom_parameter": "True", "command_parameter": "True" },
-            { "name": "user", "type": "AUTO", "non_stick": "True", "custom_parameter": "True", "command_parameter": "True" }
+            { "name": "user", "non_stick": "True", "custom_parameter": "True" }
         ] },
         { "type": "LOOP_START", "name": "prompt_for_parameters_loop", "loop_number": "1" },
         { "type": "API_REQUEST", "name": "test_api.get_filtered_registries", "parameters": [

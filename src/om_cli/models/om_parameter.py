@@ -11,8 +11,7 @@ class OMParameterType(Enum):
     STRING = 0
     INTEGER = 1
     BOOLEAN = 2
-    AUTO = 3
-    UNDEFINED = 4
+    UNDEFINED = 3
 
 
 class OMParameter(BaseModel):
@@ -25,7 +24,6 @@ class OMParameter(BaseModel):
             - STRING: A string parameter.
             - INTEGER: An integer parameter.
             - BOOLEAN: True or False.
-            - AUTO: Automatically generated value by the system, the user is not allowed to change it.
             - UNDEFINED: The type is not defined.
         value (str | None): The current value of the parameter (optional).
         default_value (str | None): The default value of the parameter, will be used if you press enter without entering anything in the prompt (optional).
@@ -76,8 +74,6 @@ class OMParameter(BaseModel):
             return "Boolean"
         elif self.type == OMParameterType.INTEGER:
             return "Integer"
-        elif self.type == OMParameterType.AUTO:
-            return "Auto"
         elif self.type == OMParameterType.UNDEFINED:
             return "Undefined"
         else:

@@ -6,7 +6,6 @@ from consolemenu.menu_component import Dimension
 
 from src.om_cli.helpers.text_helpers import colorize_text
 from src.om_cli.models.om_operation import OMOperation
-from src.om_cli.models.om_parameter import OMParameterType
 from src.om_cli.services.custom_components_processing import CustomComponents
 from src.om_cli.services.operation_processing import process_operation
 
@@ -185,7 +184,6 @@ def generate_parameter_help_text(operation: OMOperation) -> str:
             + (" - Is Command Parameter" if parameter.command_parameter else "")
             + (" - Is Non-stick" if parameter.non_stick else "")
             for parameter in action.parameters
-            if parameter.type != OMParameterType.AUTO
         ]
         if parameters:
             help_text += colorize_text(
