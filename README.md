@@ -29,11 +29,12 @@ cd om-cli
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+chmod +x run_cli*
 ```
 
 ### Test Usage
 ```bash
-python3 -m src.om_cli -t custom/test_resources/mock_om_tree.json -m custom/test_resources/mock_api_responses.json
+./run_cli_test.sh
 ```
 
 ## Configuration
