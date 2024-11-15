@@ -1,11 +1,13 @@
 ansicolors==1.1.8
 console-menu==0.8.0
 pydantic==2.9.2
-pydantic_core==2.24.2
 pytest==8.3.3
 pytest-asyncio==0.24.0
 pytest-env==1.1.5
 python-dotenv==1.0.1
 requests==2.32.3
 rich==13.9.2
-coverage==7.6.3 # Currently testing
+coverage==7.6.3
+syslog-rfc5424-formatter==1.2.3
+jsonpath_ng==1.7.0
+confluent_kafka==2.6.0
