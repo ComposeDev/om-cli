@@ -1,4 +1,4 @@
-# OM CLI System Documentation
+# OM CLI Framework
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -9,18 +9,32 @@
 6. [Logic flow of the system](#logic-flow-of-the-system)
 9. [License](#license)
 
+
+## Disclaimer
+The OM CLI documentation is in an early stage and is prone to change.
+
 ## Introduction
-Tho OM CLI system (Operation Menu Command Line Interface) is a command line tool that provides a menu-driven interface for executing operations on a system.
-It allows users to interact with the system through a series of operations and menus, making it easy to perform complex tasks without having to remember or type out long commands.
+The OM CLI (Operation Menu Command Line Interface) is a terminal-based tool designed to provide a user-friendly, menu-driven interface for executing various operations, such as API calls.  
+It allows users to interface with different systems and present information in a way that suits their needs.  
+The menu structure and the operations are defined using configuration files, making it highly customizable.
+
+![A basic example of the OM CLI](documentation/menu_example1.png)
 
 ## Installation
-TBD
+Clone the project and install the required dependencies.
 
-### Prerequisites
-TBD
+```bash
+git clone https://github.com/ComposeDev/om-cli
+cd om-cli
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### Steps
-Detailed steps to install the system.
+### Test Usage
+```bash
+python3 -m src.om_cli -t custom/test_resources/mock_om_tree.json -m custom/test_resources/mock_api_responses.json
+```
 
 ## Configuration
 The OM CLI system use multiple configuration files to define the operations and API endpoints that can be executed.
@@ -35,7 +49,7 @@ Information on how to configure API definitions can be found [here](documentatio
 ### Action Packs
 Information on how to use Action Packs can be found [here](documentation/action_packs.md).
 
-## Usage
+## Commands
 The OM CLI can be used in two ways: Interactive mode and by parameter based command execution.
 
 It supports a couple of generic parameters used to control the behavior of the system.
@@ -72,17 +86,13 @@ It supports a couple of generic parameters used to control the behavior of the s
 
 ### Interactive mode
 When using the interactive mode, the user is presented with a menu-driven interface that allows them to navigate through the operation tree and execute commands.
-![A basic example of the OM CLI](documentation/menu_example1.png)
 
 ### Argument based command execution
 This mode is made for executing operations directly from the command line, without having to navigate through the menu.
 It is accessed by providing the operation and its parameters as arguments when starting the OM CLI.
 
-## Commands
-Detailed information about each command available in the OM CLI system.
-
 ## Logic flow of the system
-Interactive mode:
+### Interactive mode:
 
 1. Start the OM CLI system
 2. Load the Custom configuration files
@@ -98,11 +108,9 @@ Interactive mode:
 13. When all actions are executed, display the result with a generated command for repeating the operation without the need for using the interactive mode
 14. Return to the main menu
 
-
-Parameter based command execution:
+### Parameter based command execution:
 
 1. Start the OM CLI system using the -o/--operation argument
-TBD
 
 ## License
 
