@@ -6,3 +6,5 @@
 [] Add more tests
 [] Add WebUI for managing configuration
 [] Replace generated docstrings with handcrafted ones
+[] Check limit on list with index
+[] Add GitHub actions for testing
