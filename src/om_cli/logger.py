@@ -198,12 +198,12 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def update_terminal_log_level(level: int) -> None:
+def update_terminal_log_level(level) -> None:
     """
     Update the log level for terminal handlers (stdout and stderr).
 
     Args:
-        level (int): The logging level to set for terminal handlers.
+        level: The logging level to set for terminal handlers.
     """
     global logger
     for handler in logger.handlers:
