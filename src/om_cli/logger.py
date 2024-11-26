@@ -70,24 +70,25 @@ def load_logging_config() -> Dict:
         with open(log_config, encoding="utf-8") as file:
             config_dict = json.load(file)
 
-            # Custom filters configuration
+            # Custom filters to log debug and info messages to stdout, and warning, error and critical messages to stderr
             config_dict["filters"] = {
                 "info_debug_filter": {"()": InfoDebugFilter},
                 "warning_error_filter": {"()": WarningErrorFilter},
             }
 
-            # RFC5424 formatter configuration
             config_dict["formatters"]["syslog"] = {
                 "()": CustomRFC5424Formatter,
                 "format": "%(message)s",
             }
 
-            # Generate timestamped log file name
+            # Generate a unique file name with a timestamp
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             log_file_name = f"logs/logfile_{timestamp}.log"
+
+            # Ensure the logs directory exists
             os.makedirs(os.path.dirname(log_file_name), exist_ok=True)
 
-            # Configure file handler
+            # Add file handler to the configuration
             config_dict["handlers"]["file"] = {
                 "class": "logging.FileHandler",
                 "formatter": "syslog",
@@ -164,7 +165,7 @@ def setup_logger(logger_name: str = "om_cli", level: int = logging.INFO) -> logg
         logger = logging.getLogger(logger_name)
         logger.debug("Logging configuration %s loaded", logger_name)
 
-        # Set the level for stdout and stderr handlers
+        # Set the level for stdout and stderr handlers based on the provided level
         for handler in logger.handlers:
             if isinstance(handler, logging.StreamHandler) and not isinstance(
                 handler, logging.FileHandler
@@ -211,5 +212,5 @@ def update_terminal_log_level(level: int) -> None:
         ):
             handler.setLevel(level)
 
-    level_name = logging._levelToName.get(level, f"Level {level}")
-    logger.debug("Updated terminal log level to %s", level_name)
+    level_name = logging._levelToName.get(level, "Level %s" % level)
+    logger.debug(f"Updated terminal log level to {level_name}")
